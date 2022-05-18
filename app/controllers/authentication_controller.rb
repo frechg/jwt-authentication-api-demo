@@ -1,5 +1,6 @@
 class AuthenticationController < ApplicationController
   rescue_from  ActionController::ParameterMissing, with: :params_missing
+  skip_before_action :require_authorization, only: :create
 
   def create
     user = User.find_by(email: user_params[:email])
