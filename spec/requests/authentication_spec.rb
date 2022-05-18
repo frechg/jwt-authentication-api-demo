@@ -2,15 +2,40 @@ require 'rails_helper'
 
 RSpec.describe 'Authentication', type: :request do
   context 'POST /authenticate' do
-    it 'authenticates the client' do
-      post '/authenticate', params: { user: { username: 'person', password: 'testingpass' }}
+    let(:user) { create(:user) }
+    let(:key) { AuthorizationTokenService::HMAC_SECRET }
+    let(:algo) { AuthorizationTokenService::ALGO_TYPE }
+
+    it 'responds with a JWT payload containing the authenticated users id' do
+      post '/authenticate', params: {
+        user: { email: user.email, password: user.password }
+      }
+
+      token = JSON.parse(response.body)['token']
+      payload = JWT.decode(token, key, { algorithm: algo })
 
       expect(response).to have_http_status(:created)
-      expect(response.body).to eq({token: '123'}.to_json)
+      expect(payload[0]).to eq({ 'user_id' =>  user.id })
+    end
+
+    it 'returns a error when the user does not exist' do
+      post '/authenticate', params: {
+        user: { email: 'person@notreal.com', password: 'password' }
+      }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns an error when the user is not authorized' do
+      post '/authenticate', params: {
+        user: { email: user.email, password: 'wrong' }
+      }
+
+      expect(response).to have_http_status(:unauthorized)
     end
 
     it 'returns an error when the user key is missing' do
-      post '/authenticate', params: { username: 'person',  password: 'testingpass' }
+      post '/authenticate', params: { email: user.email,  password: user.password }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to eq({
@@ -18,17 +43,17 @@ RSpec.describe 'Authentication', type: :request do
       }.to_json)
     end
 
-    it 'returns an error when the username is missing' do
-      post '/authenticate', params: { user: {  password: 'testingpass' }}
+    it 'returns an error when the email is missing' do
+      post '/authenticate', params: { user: {  password: user.password }}
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to eq({
-        error: 'param is missing or the value is empty: username'
+        error: 'param is missing or the value is empty: email'
       }.to_json)
     end
 
     it 'returns an error when the password is missing' do
-      post '/authenticate', params: { user: { username: 'person' }}
+      post '/authenticate', params: { user: { email: user.email }}
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to eq({
