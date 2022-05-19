@@ -34,7 +34,7 @@ RSpec.describe 'Authentication', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it 'returns an error when the user key is missing' do
+    it 'returns an error when the user param is missing' do
       post '/authenticate', params: { email: user.email,  password: user.password }
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -43,7 +43,7 @@ RSpec.describe 'Authentication', type: :request do
       }.to_json)
     end
 
-    it 'returns an error when the email is missing' do
+    it 'returns an error when the email param is missing' do
       post '/authenticate', params: { user: {  password: user.password }}
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -52,7 +52,7 @@ RSpec.describe 'Authentication', type: :request do
       }.to_json)
     end
 
-    it 'returns an error when the password is missing' do
+    it 'returns an error when the password param is missing' do
       post '/authenticate', params: { user: { email: user.email }}
 
       expect(response).to have_http_status(:unprocessable_entity)
