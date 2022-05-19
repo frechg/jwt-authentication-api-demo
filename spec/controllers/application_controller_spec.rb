@@ -16,7 +16,7 @@ RSpec.describe ApplicationController, type: :request do
 
     it 'respons with error if user does not exist' do
       user_id = 0
-      auth_token = AuthorizationTokenService.call(user_id)
+      auth_token = AuthorizationTokenService.encode(user_id)
       get(
         "/users/#{000}",
         headers: {authorization: "Bearer #{auth_token}"}
@@ -26,7 +26,7 @@ RSpec.describe ApplicationController, type: :request do
     end
 
     it 'responds ok if the request is authorized' do
-      auth_token = AuthorizationTokenService.call(user.id)
+      auth_token = AuthorizationTokenService.encode(user.id)
       get(
         "/users/#{user.id}",
         headers: {authorization: "Bearer #{auth_token}"}
@@ -41,7 +41,7 @@ RSpec.describe ApplicationController, type: :request do
 
     it 'responds with error if the profile is not the authorized users' do
       user_two = create(:user, email: 'p2@e.com', username: 'p2', password: 'pass')
-      auth_token = AuthorizationTokenService.call(user.id)
+      auth_token = AuthorizationTokenService.encode(user.id)
       get(
         "/users/#{user_two.id}",
         headers: {authorization: "Bearer #{auth_token}"}

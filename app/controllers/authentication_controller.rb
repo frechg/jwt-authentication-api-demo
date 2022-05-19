@@ -8,7 +8,7 @@ class AuthenticationController < ApplicationController
     if !user || !user.authenticate(user_params[:password])
       head :unauthorized
     else
-      token = AuthorizationTokenService::call(user.id)
+      token = AuthorizationTokenService::encode(user.id)
       render json: { token: token }, status: :created
     end
   end

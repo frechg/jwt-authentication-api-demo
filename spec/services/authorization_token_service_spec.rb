@@ -5,7 +5,7 @@ RSpec.describe AuthorizationTokenService  do
     let(:user) { create(:user) }
 
     it 'returns JWT authorization token with a user id in the payload' do
-      encoded_token = described_class.call(user.id)
+      encoded_token = described_class.encode(user.id)
       decoded_token = JWT.decode(
         encoded_token,
         described_class::HMAC_SECRET,
