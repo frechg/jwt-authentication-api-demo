@@ -18,7 +18,7 @@ RSpec.describe ApplicationController, type: :request do
       payload = { user_id: 0 }
       auth_token = AuthorizationTokenService.encode(payload)
       get(
-        "/users/#{000}",
+        "/users/#{0}",
         headers: {authorization: "Bearer #{auth_token}"}
       )
 
