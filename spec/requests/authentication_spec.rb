@@ -18,6 +18,15 @@ RSpec.describe 'Authentication', type: :request do
       expect(payload[0]).to eq({ 'user_id' =>  user.id })
     end
 
+    it 'responds with users username when authentication is valid' do
+      post '/authenticate', params: {
+        user: { email: user.email, password: user.password }
+      }
+
+      expect(response).to have_http_status(:created)
+      expect(JSON.parse(response.body)['username']).to eq(user.username)
+    end
+
     it 'returns a error when the user does not exist' do
       post '/authenticate', params: {
         user: { email: 'person@notreal.com', password: 'password' }

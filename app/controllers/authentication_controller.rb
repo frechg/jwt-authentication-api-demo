@@ -9,7 +9,8 @@ class AuthenticationController < ApplicationController
       head :unauthorized
     else
       token = AuthorizationTokenService::encode({ user_id: user.id })
-      render json: { token: token }, status: :created
+      data = { token: token, username: user.username }
+      render json: data, status: :created
     end
   end
 
