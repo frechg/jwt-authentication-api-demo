@@ -3,14 +3,21 @@ class AuthenticationController < ApplicationController
   skip_before_action :require_authorization, only: :create
 
   def create
-    user = User.find_by(email: user_params[:email])
+    @user = User.find_by(email: user_params[:email])
 
-    if !user || !user.authenticate(user_params[:password])
-      head :unauthorized
+    if @user && @user.authenticate(user_params[:password])
+      token = AuthorizationService::TokenEncoding.new({encoding_params:
+        { user_id: @user.id }
+      }).call
+
+      if token && token.success?
+        response_data = { token: token.payload, username: @user.username }
+        render json: response_data, status: :created
+      else
+        head :unauthorized
+      end
     else
-      token = AuthorizationTokenService::encode({ user_id: user.id })
-      data = { token: token, username: user.username }
-      render json: data, status: :created
+      head :unauthorized
     end
   end
 
