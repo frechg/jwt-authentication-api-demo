@@ -17,7 +17,9 @@ class UsersController < ApplicationController
     @user = User.new(new_user_params)
 
     if @user.save
-      token = AuthorizationTokenService::encode({user_id: @user.id})
+      token = AuthorizationService::TokenEncoding.new({encoding_params:
+        {user_id: @user.id}
+      }).call
       data = { username: @user.username, token: token }
       render json: data, status: :created
     else

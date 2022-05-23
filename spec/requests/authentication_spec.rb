@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe 'Authentication', type: :request do
   context 'POST /authenticate' do
     let(:user) { create(:user) }
-    let(:key) { AuthorizationTokenService::HMAC_SECRET }
-    let(:algo) { AuthorizationTokenService::ALGO_TYPE }
+    let(:key) { AuthorizationService::Constants::HMAC_SECRET }
+    let(:algo) { AuthorizationService::Constants::ALGO_TYPE }
 
     it 'responds with a JWT payload containing the authenticated users id' do
       post '/authenticate', params: {

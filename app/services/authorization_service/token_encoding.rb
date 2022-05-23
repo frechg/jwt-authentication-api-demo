@@ -12,10 +12,6 @@ module AuthorizationService
         HMAC_SECRET,
         ALGO_TYPE
       )
-    rescue JWT::EncodeError => e
-      OpenStruct.new({success?: false, error: e})
-    else
-      OpenStruct.new({success?: true, token: token})
     end
   end
 end

@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe 'Users', type: :request do
   describe 'POST /signup' do
     it 'creates a new user and JWT given valid username, email and password' do
-      allow(AuthorizationTokenService).to receive(:encode).and_return('123')
+      allow_any_instance_of(AuthorizationService::TokenEncoding).to(
+        receive(:call).and_return('123')
+      )
 
       post(
         '/signup',

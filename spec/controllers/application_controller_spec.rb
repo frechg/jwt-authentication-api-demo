@@ -15,25 +15,25 @@ RSpec.describe ApplicationController, type: :request do
     end
 
     it 'respons with an error if user does not exist' do
-      payload = AuthorizationService::TokenEncoding.new({encoding_params:
+      token = AuthorizationService::TokenEncoding.new({encoding_params:
         { user_id: 0 }
       }).call
 
       get(
         "/users/#{0}",
-        headers: {authorization: "Bearer #{payload.token}"}
+        headers: {authorization: "Bearer #{token}"}
       )
 
       expect(response).to have_http_status(:unauthorized)
     end
 
     it 'responds ok if the request is authorized' do
-      payload = AuthorizationService::TokenEncoding.new({encoding_params:
+      token = AuthorizationService::TokenEncoding.new({encoding_params:
         { user_id: user.id }
       }).call
       get(
         "/users/#{user.id}",
-        headers: {authorization: "Bearer #{payload.token}"}
+        headers: {authorization: "Bearer #{token}"}
       )
 
       expect(response).to have_http_status(:ok)
@@ -45,12 +45,12 @@ RSpec.describe ApplicationController, type: :request do
 
     it 'responds with error if the profile is not the authorized users' do
       other_user = create(:user, email: 'p2@e.com', username: 'p2', password: 'pass')
-      payload = AuthorizationService::TokenEncoding.new({encoding_params:
+      token = AuthorizationService::TokenEncoding.new({encoding_params:
         { user_id: user.id }
       }).call
       get(
         "/users/#{other_user.id}",
-        headers: {authorization: "Bearer #{payload.token}"}
+        headers: {authorization: "Bearer #{token}"}
       )
 
       expect(response).to have_http_status(:unauthorized)
