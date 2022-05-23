@@ -10,12 +10,22 @@ class ApplicationController < ActionController::API
   end
 
   def request_authorizing
-    token, _options = token_and_options(request)
-    payload = AuthorizationTokenService.decode(token)
-    user_id = payload[0]['user_id']
-    @current_user = User.find(user_id)
-  rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+    payload = AuthorizationService::TokenDecoding.new({decoding_params:
+      { token: token_extracting }
+    }).call
+
+    if payload && payload.success?
+      @current_user = User.find(payload.payload[0]['user_id'])
+    else
+      head :unauthorized
+    end
+  rescue ActiveRecord::RecordNotFound
     head :unauthorized
+  end
+
+  def token_extracting
+    token, options = token_and_options(request)
+    return token
   end
 
   def current_user

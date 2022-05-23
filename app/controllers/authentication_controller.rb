@@ -6,12 +6,12 @@ class AuthenticationController < ApplicationController
     @user = User.find_by(email: user_params[:email])
 
     if @user && @user.authenticate(user_params[:password])
-      token = AuthorizationService::TokenEncoding.new({encoding_params:
+      payload = AuthorizationService::TokenEncoding.new({encoding_params:
         { user_id: @user.id }
       }).call
 
-      if token && token.success?
-        response_data = { token: token.payload, username: @user.username }
+      if payload && payload.success?
+        response_data = { token: payload.token, username: @user.username }
         render json: response_data, status: :created
       else
         head :unauthorized
