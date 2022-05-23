@@ -11,15 +11,18 @@ RSpec.describe AuthorizationService::TokenDecoding  do
       secret,
       algo
     )
-    payload = described_class.decode(token)
+    payload = described_class.new({decoding_params: {token: token}}).call
 
-    expect(token_payload[0]['data']).to eq('123')
+    expect(payload.payload[0]['data']).to eq('123')
   end
 
   it 'raises an error when the JWT is not valid' do
     token = '123invalid'
 
-    expect { described_class.decode(token) }.to raise_error(JWT::DecodeError)
+    payload = described_class.new({decoding_params: {token: token}}).call
+    p payload.success?
+
+    expect(payload.success?).to eq(false)
   end
 end
 
