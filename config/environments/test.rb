@@ -8,6 +8,13 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Action Mailer
+  config.action_mailer.default_url_options = { host: 'localhost:3000' } # for absolute urls in email
+  config.action_mailer.asset_host = "http://localhost:3000" # for image URLs in HTML email
+
+  # Allow generating absolute urls with routing url helpers.
+  Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+
   # Turn false under Spring and add config.action_view.cache_template_loading = true.
   config.cache_classes = true
 
