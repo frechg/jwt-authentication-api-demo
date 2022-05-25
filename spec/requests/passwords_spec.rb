@@ -29,4 +29,21 @@ RSpec.describe 'Passwords', type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe 'GET /users/:user_id/password/edit' do
+    let(:user) { create :user }
+
+    it 'renders a password reset form with user id and token params' do
+      user.update(confirmation_token: '123')
+      get edit_user_password_path(user), params: {
+        token: '123'
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(user.confirmation_token)
+    end
+
+    it '' do
+    end
+  end
 end

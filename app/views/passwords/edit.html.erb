@@ -1,0 +1,16 @@
+<div>
+  <h2>Password reset</h2>
+  <p>Enter a new password in the from below.</p>
+
+  <%= form_with url: user_password_path(@user, token: @user.confirmation_token),
+    method: :put do |form| %>
+
+    <%= form.label :password %>
+    <%= form.password_field :password %>
+
+    <div>
+      <%= form.submit 'Reset password' %>
+    </div>
+
+  <% end %>
+</div>
