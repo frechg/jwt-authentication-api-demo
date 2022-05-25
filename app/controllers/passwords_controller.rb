@@ -3,11 +3,11 @@ class PasswordsController < ApplicationController
 
   def create
     if user = find_user_for_create
-      forgot_password!(user)
+      user.forgot_password!
       deliver_email(user)
-      render json: { email: user.email }, status: :created
+      head :created
     else
-      render status: :unprocessable_entity
+      head :unprocessable_entity
     end
   end
 

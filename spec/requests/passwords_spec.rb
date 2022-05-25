@@ -8,23 +8,25 @@ RSpec.describe 'Passwords', type: :request do
       post '/passwords', params: {
         password: { email: user.email }
       }
-    end
 
-    it 'saves a confirmation_token on the user' do
-      post '/passwords', params: {
-        password: { email: user.email }
-      }
-
-      expect(user.confirmation_token).not_to eq(nil)
+      expect(response).to have_http_status(:created)
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
     end
 
     it 'responds with an error if the email param is missing' do
+      post '/passwords', params: {
+        password: { email: '' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it 'responds with an error if the user does not exist' do
-    end
+      post '/passwords', params: {
+        password: { email: 'notreal@fake.com' }
+      }
 
-    it 'responds with an error if the email does not send' do
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 end
