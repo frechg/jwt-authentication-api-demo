@@ -1,10 +1,6 @@
 class PasswordsController < ApplicationController
   skip_before_action :require_authorization
 
-  def edit
-    @user = find_user_for_edit
-  end
-
   def create
     if user = find_user_for_create
       user.forgot_password!
@@ -12,6 +8,22 @@ class PasswordsController < ApplicationController
       head :created
     else
       head :unprocessable_entity
+    end
+  end
+
+  def edit
+    @user = find_user_for_edit
+  end
+
+  def update
+    @user = find_user_for_update
+
+    if password_from_params.present?
+      @user.update(password: password_from_params)
+      @user.forgot_password_reset!
+      render template: "passwords/update_success", status: :ok
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -25,8 +37,16 @@ class PasswordsController < ApplicationController
     find_user_by_id_and_confirmation_token
   end
 
+  def find_user_for_update
+    find_user_by_id_and_confirmation_token
+  end
+
   def email_from_password_params
     params.dig(:password, :email)
+  end
+
+  def password_from_params
+    params[:password]
   end
 
   def find_user_by_id_and_confirmation_token

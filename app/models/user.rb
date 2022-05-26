@@ -8,9 +8,18 @@ class User < ApplicationRecord
     save validate: false
   end
 
+  def forgot_password_reset!
+    remove_confirmation_token
+    save validate: false
+  end
+
   private
 
   def generate_confirmation_token
     self.confirmation_token = SecureRandom.hex(20).encode('UTF-8')
+  end
+
+  def remove_confirmation_token
+    self.confirmation_token = nil
   end
 end
