@@ -3,7 +3,7 @@
   <p>Enter a new password in the from below.</p>
 
   <%= form_with url: user_password_path(@user, token: @user.confirmation_token),
-    method: :put do |form| %>
+    method: :patch do |form| %>
 
     <%= form.label :password %>
     <%= form.password_field :password %>

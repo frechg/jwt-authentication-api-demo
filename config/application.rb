@@ -13,6 +13,9 @@ module JwtAuthenticationApiDemo
 
     config.api_only = true
 
+    config.middleware.use Rack::MethodOverride
+    config.middleware.use ActionDispatch::Flash
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
